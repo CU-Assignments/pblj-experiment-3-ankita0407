@@ -1,0 +1,75 @@
+import java.util.Scanner;
+
+// Custom exception for invalid PIN
+class InvalidPINException extends Exception {
+    public InvalidPINException(String message) {
+        super(message);
+    }
+}
+
+// Custom exception for insufficient balance
+class InsufficientBalanceException extends Exception {
+    public InsufficientBalanceException(String message) {
+        super(message);
+    }
+}
+
+// ATM Class
+class ATM {
+    private static final int CORRECT_PIN = 0407;  // Hardcoded correct PIN
+    private double balance;
+
+    public ATM(double initialBalance) {
+        this.balance = initialBalance;
+    }
+
+    // Method to verify PIN
+    public void verifyPIN(int enteredPIN) throws InvalidPINException {
+        if (enteredPIN != CORRECT_PIN) {
+            throw new InvalidPINException("Incorrect PIN! Access Denied.");
+        }
+    }
+
+    // Method to withdraw money
+    public void withdraw(double amount) throws InsufficientBalanceException {
+        if (amount > balance) {
+            throw new InsufficientBalanceException("Insufficient balance! Transaction Failed.");
+        }
+        balance -= amount;
+        System.out.println("Withdrawal successful! You withdrew: $" + amount);
+    }
+
+    // Method to display balance
+    public void showBalance() {
+        System.out.println("Current Balance: $" + balance);
+    }
+}
+
+// Main Class
+public class ATMSystem {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        ATM atm = new ATM(6000.00);  // Initial balance of $1000
+
+        try {
+            // Step 1: PIN Verification
+            System.out.print("Enter your PIN: ");
+            int enteredPIN = scanner.nextInt();
+            atm.verifyPIN(enteredPIN);
+
+            // Step 2: Withdrawal
+            System.out.print("Enter amount to withdraw: ");
+            double amount = scanner.nextDouble();
+            atm.withdraw(amount);
+
+        } catch (InvalidPINException | InsufficientBalanceException e) {
+            System.out.println("Error: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Invalid input! Please enter a numeric value.");
+        } finally {
+            // Ensure balance is always displayed
+            atm.showBalance();
+            scanner.close();
+        }
+    }
+}
